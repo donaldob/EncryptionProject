@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>Login to Animal Tracker</title>
+<meta name="keywords" content="Animal Tracker, tracking, animal, GPS, Google Maps, Maps, Google" /><link rel='stylesheet' href='regocss.css' type='text/css' />
+<script src="validation.js"></script>
+<script src="crypto.js"></script>
+
+<script>
+ var DeliveredKey = "wait";
+var CryptoKey = "";
+function InitSecurity()
+{
+var guid = createGuid();
+var Selecter = document.getElementById("Hguid");
+Selecter.value = guid;
+Get_Key(guid);
+}
+
+function go()
+{
+alert(createGuid());
+Get_Key(createGuid());
+
+}
+
+function check()
+{
+alert(DeliveredKey);
+}
+
+
+function Get_Key(GuidString)
+
+{
+var xmlhttp;
+//var Selecter = document.getElementById("crypted");
+//Selecter.value = "init";
+
+ 
+xmlhttp=new XMLHttpRequest();
+
+
+xmlhttp.onreadystatechange=function()
+  {
+
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    var RawResponse =xmlhttp.responseText;
+    //DeliveredKey = RawResponse;
+CryptoKey = RawResponse.split('^')[0];
+
+//Selecter.value = RawResponse ;
+
+    }
+else
+{
+
+//DeliveredKey = "got none";
+//Selecter.value = "bd " ;
+}
+  }
+
+xmlhttp.open("GET","http://dondemos.comuf.com/crypto/getKey.php?guid=" + GuidString ,true);
+xmlhttp.send();
+
+
+}
+
+function SubmitForm()
+{
+var Selecteruserid = document.getElementById("userid");
+var SelecterHuserid = document.getElementById("Huserid");
+
+var Selecterpassid1 = document.getElementById("passid1");
+var SelecterHpassid = document.getElementById("Hpassid");
+var Selecterguid = document.getElementById("Hguid");
+SelecterHuserid.value = rc4(CryptoKey,Selecteruserid.value);
+SelecterHpassid.value = rc4(CryptoKey,Selecterpassid1.value);
+
+if(formValidation())
+{
+document.forms[0].submit();
+}
+
+
+
+}
+</script>
+
+</head>
+<body onload = "InitSecurity()">
+<h1>Registration Form</h1>
+<p>Use tab keys to move from one input field to the next.</p>
+<form name='registration' method="post" action = "http://dondemos.comuf.com/crypto/login_access.php">
+<ul>
+<li><label for="userid">User id:</label></li>
+<li><input type="text" name="userid" id = "userid" size="12" /></li>
+<li><label for="passid1">Password:</label></li>
+<li><input type="password" name="passid1" id = "passid1" size="12" /></li>
+
+
+<li><input type="button" name="subber" value="Subber" onClick="SubmitForm()" /></li>
+</ul>
+<input type="hidden" name="Hguid" id = "Hguid"  size="50" />
+<input type="hidden" name="Husername" id = "Huserid"   size="50" />
+<input type="hidden" name="Hpassword" id = "Hpassid"   size="50" />
+</form>
+</body>
+
+
+
+
+</html>
